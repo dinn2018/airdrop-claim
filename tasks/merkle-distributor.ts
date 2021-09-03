@@ -1,10 +1,10 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import '@nomiclabs/hardhat-ethers'
 import 'hardhat-deploy'
 
 import { task } from 'hardhat/config'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { MerkleDistributor } from './contracts'
+import { toToken } from './utils'
 
 task('claim', 'claim')
 	.addParam('index', 'account index')
@@ -14,13 +14,10 @@ task('claim', 'claim')
 	.setAction(async (args: any, env: HardhatRuntimeEnvironment) => {
 		const merkleDistributor = await MerkleDistributor(env)
 		const proofs = String(args.proofs).split(',')
-		console.log('proofs', proofs)
-		const amount = BigNumber.from(args.amount)
-		console.log('amount', amount)
 		const tx = await merkleDistributor.claim(
 			args.index,
 			args.to,
-			amount,
+			toToken(args.amount),
 			proofs
 		)
 		console.log('claim', tx)
@@ -43,6 +40,14 @@ task('root')
 		const merkleDistributor = await MerkleDistributor(env)
 		const merkleRoot = await merkleDistributor.merkleRoot()
 		console.log('merkleRoot', merkleRoot)
+	})
+
+task('isClaimed')
+	.addParam('index', 'account index')
+	.setAction(async (args: any, env: HardhatRuntimeEnvironment) => {
+		const merkleDistributor = await MerkleDistributor(env)
+		const isClaimed = await merkleDistributor.isClaimed(args.index)
+		console.log('isClaimed', isClaimed)
 	})
 
 module.exports = {}

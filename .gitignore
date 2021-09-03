@@ -2,9 +2,8 @@ cache/
 artifacts/
 exports/
 deploy/
-scripts/
+
 coverage*
-types/
 
 .vscode/*
 !.vscode/settings.json.default

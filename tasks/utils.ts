@@ -3,11 +3,8 @@ import { BigNumber } from 'ethers'
 export const oneToken = BigNumber.from('1000000000000000000')
 
 export const toToken = (value: string) => {
-	const n = BigNumber.from(value)
-	if (n.lte(BigNumber.from('1'))) {
-		return BigNumber.from((parseFloat(value) * 1e18).toString())
-	}
-	return n.mul(oneToken)
+	const v = parseFloat(value)
+	return BigNumber.from((v * 1e18).toString())
 }
 
 export const formatToken = (value: BigNumber, fixed = 6): string => {
