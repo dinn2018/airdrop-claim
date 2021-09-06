@@ -21,16 +21,18 @@ import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
 interface MerkleDistributorInterface extends ethers.utils.Interface {
   functions: {
-    "claim(uint256,address,uint256,bytes32[])": FunctionFragment;
+    "claim(uint256,address,uint256,uint256,bytes32[])": FunctionFragment;
     "isClaimed(uint256)": FunctionFragment;
     "merkleRoot()": FunctionFragment;
+    "mints()": FunctionFragment;
+    "nft()": FunctionFragment;
     "setRoot(bytes32)": FunctionFragment;
     "token()": FunctionFragment;
   };
 
   encodeFunctionData(
     functionFragment: "claim",
-    values: [BigNumberish, string, BigNumberish, BytesLike[]]
+    values: [BigNumberish, string, BigNumberish, BigNumberish, BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "isClaimed",
@@ -40,17 +42,21 @@ interface MerkleDistributorInterface extends ethers.utils.Interface {
     functionFragment: "merkleRoot",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "mints", values?: undefined): string;
+  encodeFunctionData(functionFragment: "nft", values?: undefined): string;
   encodeFunctionData(functionFragment: "setRoot", values: [BytesLike]): string;
   encodeFunctionData(functionFragment: "token", values?: undefined): string;
 
   decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "merkleRoot", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "mints", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "nft", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "setRoot", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
 
   events: {
-    "Claimed(uint256,address,uint256)": EventFragment;
+    "Claimed(uint256,address,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
@@ -104,6 +110,7 @@ export class MerkleDistributor extends BaseContract {
       index: BigNumberish,
       account: string,
       amount: BigNumberish,
+      tokenId: BigNumberish,
       merkleProof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -114,6 +121,10 @@ export class MerkleDistributor extends BaseContract {
     ): Promise<[boolean]>;
 
     merkleRoot(overrides?: CallOverrides): Promise<[string]>;
+
+    mints(overrides?: CallOverrides): Promise<[string]>;
+
+    nft(overrides?: CallOverrides): Promise<[string]>;
 
     setRoot(
       merkleRoot_: BytesLike,
@@ -127,6 +138,7 @@ export class MerkleDistributor extends BaseContract {
     index: BigNumberish,
     account: string,
     amount: BigNumberish,
+    tokenId: BigNumberish,
     merkleProof: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -134,6 +146,10 @@ export class MerkleDistributor extends BaseContract {
   isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   merkleRoot(overrides?: CallOverrides): Promise<string>;
+
+  mints(overrides?: CallOverrides): Promise<string>;
+
+  nft(overrides?: CallOverrides): Promise<string>;
 
   setRoot(
     merkleRoot_: BytesLike,
@@ -147,6 +163,7 @@ export class MerkleDistributor extends BaseContract {
       index: BigNumberish,
       account: string,
       amount: BigNumberish,
+      tokenId: BigNumberish,
       merkleProof: BytesLike[],
       overrides?: CallOverrides
     ): Promise<void>;
@@ -154,6 +171,10 @@ export class MerkleDistributor extends BaseContract {
     isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
     merkleRoot(overrides?: CallOverrides): Promise<string>;
+
+    mints(overrides?: CallOverrides): Promise<string>;
+
+    nft(overrides?: CallOverrides): Promise<string>;
 
     setRoot(merkleRoot_: BytesLike, overrides?: CallOverrides): Promise<void>;
 
@@ -164,10 +185,16 @@ export class MerkleDistributor extends BaseContract {
     Claimed(
       index?: null,
       account?: null,
-      amount?: null
+      amount?: null,
+      tokenId?: null
     ): TypedEventFilter<
-      [BigNumber, string, BigNumber],
-      { index: BigNumber; account: string; amount: BigNumber }
+      [BigNumber, string, BigNumber, BigNumber],
+      {
+        index: BigNumber;
+        account: string;
+        amount: BigNumber;
+        tokenId: BigNumber;
+      }
     >;
   };
 
@@ -176,6 +203,7 @@ export class MerkleDistributor extends BaseContract {
       index: BigNumberish,
       account: string,
       amount: BigNumberish,
+      tokenId: BigNumberish,
       merkleProof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -186,6 +214,10 @@ export class MerkleDistributor extends BaseContract {
     ): Promise<BigNumber>;
 
     merkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
+
+    mints(overrides?: CallOverrides): Promise<BigNumber>;
+
+    nft(overrides?: CallOverrides): Promise<BigNumber>;
 
     setRoot(
       merkleRoot_: BytesLike,
@@ -200,6 +232,7 @@ export class MerkleDistributor extends BaseContract {
       index: BigNumberish,
       account: string,
       amount: BigNumberish,
+      tokenId: BigNumberish,
       merkleProof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -210,6 +243,10 @@ export class MerkleDistributor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     merkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    mints(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    nft(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     setRoot(
       merkleRoot_: BytesLike,

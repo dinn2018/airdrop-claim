@@ -19,41 +19,41 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface IMerkleDistributorInterface extends ethers.utils.Interface {
+interface OwnableInterface extends ethers.utils.Interface {
   functions: {
-    "claim(uint256,address,uint256,bytes32[])": FunctionFragment;
-    "isClaimed(uint256)": FunctionFragment;
-    "merkleRoot()": FunctionFragment;
-    "token()": FunctionFragment;
+    "owner()": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
   };
 
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "claim",
-    values: [BigNumberish, string, BigNumberish, BytesLike[]]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isClaimed",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "merkleRoot",
+    functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
 
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "merkleRoot", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "Claimed(uint256,address,uint256)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
 }
 
-export class IMerkleDistributor extends BaseContract {
+export class Ownable extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -94,103 +94,76 @@ export class IMerkleDistributor extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: IMerkleDistributorInterface;
+  interface: OwnableInterface;
 
   functions: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
+    owner(overrides?: CallOverrides): Promise<[string]>;
+
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    isClaimed(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<[string]>;
-
-    token(overrides?: CallOverrides): Promise<[string]>;
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
   };
 
-  claim(
-    index: BigNumberish,
-    account: string,
-    amount: BigNumberish,
-    merkleProof: BytesLike[],
+  owner(overrides?: CallOverrides): Promise<string>;
+
+  renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-  merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-  token(overrides?: CallOverrides): Promise<string>;
+  transferOwnership(
+    newOwner: string,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
+    owner(overrides?: CallOverrides): Promise<string>;
+
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
+
+    transferOwnership(
+      newOwner: string,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-    token(overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
-    Claimed(
-      index?: null,
-      account?: null,
-      amount?: null
+    OwnershipTransferred(
+      previousOwner?: string | null,
+      newOwner?: string | null
     ): TypedEventFilter<
-      [BigNumber, string, BigNumber],
-      { index: BigNumber; account: string; amount: BigNumber }
+      [string, string],
+      { previousOwner: string; newOwner: string }
     >;
   };
 
   estimateGas: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
+
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    isClaimed(
-      index: BigNumberish,
-      overrides?: CallOverrides
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      merkleProof: BytesLike[],
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    isClaimed(
-      index: BigNumberish,
-      overrides?: CallOverrides
+    transferOwnership(
+      newOwner: string,
+      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

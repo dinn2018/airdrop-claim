@@ -3,12 +3,19 @@ import 'hardhat-deploy'
 
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { TEver__factory } from '../types/factories/TEver__factory'
+import { TEverNFT__factory } from '../types/factories/TEverNFT__factory'
 import { MerkleDistributor__factory } from '../types/factories/MerkleDistributor__factory'
 
 export const TEver = async (env: HardhatRuntimeEnvironment) => {
 	const deployment = await env.deployments.get(TEver.name)
 	const signers = await env.ethers.getSigners()
 	return TEver__factory.connect(deployment.address, signers[0])
+}
+
+export const TEverNFT = async (env: HardhatRuntimeEnvironment) => {
+	const deployment = await env.deployments.get(TEverNFT.name)
+	const signers = await env.ethers.getSigners()
+	return TEverNFT__factory.connect(deployment.address, signers[0])
 }
 
 export const MerkleDistributor = async (env: HardhatRuntimeEnvironment) => {

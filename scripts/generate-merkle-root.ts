@@ -18,7 +18,7 @@ const json = JSON.parse(fs.readFileSync(options.input, { encoding: 'utf8' }))
 if (typeof json !== 'object') throw new Error('Invalid JSON')
 
 fs.writeFileSync(
-	resolve(__dirname, 'result.json'), 
+	resolve(__dirname, 'result.json'),
 	JSON.stringify(parseBalanceMap(json))
 )
 console.log('ok')

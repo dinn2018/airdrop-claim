@@ -10,6 +10,7 @@ task('claim', 'claim')
 	.addParam('index', 'account index')
 	.addParam('to', 'address')
 	.addParam('amount', 'amount')
+	.addParam('tokenid', 'tokenId')
 	.addParam('proofs', 'proofs')
 	.setAction(async (args: any, env: HardhatRuntimeEnvironment) => {
 		const merkleDistributor = await MerkleDistributor(env)
@@ -18,6 +19,7 @@ task('claim', 'claim')
 			args.index,
 			args.to,
 			toToken(args.amount),
+			toToken(args.tokenid),
 			proofs
 		)
 		console.log('claim', tx)
