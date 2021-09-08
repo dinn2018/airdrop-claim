@@ -46,7 +46,7 @@ export function parseBalanceMap(balances: Format): MerkleDistributorInfo {
 		const parsedAmount = BigNumber.from(amount)
 		if (parsedAmount.lte(0)) throw new Error(`Invalid amount for account: ${account}`)
 		const parsedTokenId = BigNumber.from(tokenId)
-		if (parsedTokenId.lte(0)) throw new Error(`Invalid amount for account: ${account}`)
+		if (parsedTokenId.lt(0)) throw new Error(`Invalid amount for tokenId: ${account}`)
 
 		memo[parsed] = { amount: parsedAmount, tokenId: parsedTokenId}
 		return memo

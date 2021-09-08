@@ -19,7 +19,7 @@ task('claim', 'claim')
 			args.index,
 			args.to,
 			toToken(args.amount),
-			toToken(args.tokenid),
+			args.tokenid,
 			proofs
 		)
 		console.log('claim', tx)
@@ -27,7 +27,7 @@ task('claim', 'claim')
 		console.log('receipt', receipt)
 	})
 
-task('setRoot', 'setRoot')
+task('set', 'set')
 	.addParam('root', 'merkle root')
 	.setAction(async (args: any, env: HardhatRuntimeEnvironment) => {
 		const merkleDistributor = await MerkleDistributor(env)
