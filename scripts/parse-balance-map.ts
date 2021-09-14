@@ -22,22 +22,21 @@ interface MerkleDistributorInfo {
 	}
 }
 
-type Format = { [account: string]: { amount: string; tokenId: string} }
-type NewFormat = {address: string; tokenId: string; amount: string;}
+type Format = { [account: string]: { amount: string; } }
+type NewFormat = {address: string; amount: string;}
 
 export function parseBalanceMap(balances: Format): MerkleDistributorInfo {
 	// if balances are in an old format, process them
 	const balancesInNewFormat: NewFormat[] = Object.keys(balances).map(
 		(account): NewFormat => ({
 			address: account,
-			amount: balances[account].amount.toString().startsWith('0x') ? balances[account].amount.toString() : `0x${balances[account].amount.toString()}`,
-			tokenId: balances[account].tokenId.toString().startsWith('0x') ? balances[account].tokenId.toString() : `0x${balances[account].tokenId.toString()}`,
+			amount: balances[account].amount.toString().startsWith('0x') ? balances[account].amount.toString() : `0x${balances[account].amount.toString()}`
 		})
 	)
 
 	const dataByAddress = balancesInNewFormat.reduce<{
-		[address: string]: { amount: BigNumber; tokenId: BigNumber}
-	}>((memo, { address: account, amount, tokenId }) => {
+		[address: string]: { amount: BigNumber}
+	}>((memo, { address: account, amount }) => {
 		if (!isAddress(account)) {
 			throw new Error(`Found invalid address: ${account}`)
 		}
@@ -45,10 +44,8 @@ export function parseBalanceMap(balances: Format): MerkleDistributorInfo {
 		if (memo[parsed]) throw new Error(`Duplicate address: ${parsed}`)
 		const parsedAmount = BigNumber.from(amount)
 		if (parsedAmount.lte(0)) throw new Error(`Invalid amount for account: ${account}`)
-		const parsedTokenId = BigNumber.from(tokenId)
-		if (parsedTokenId.lt(0)) throw new Error(`Invalid amount for tokenId: ${account}`)
 
-		memo[parsed] = { amount: parsedAmount, tokenId: parsedTokenId}
+		memo[parsed] = { amount: parsedAmount}
 		return memo
 	}, {})
 
@@ -56,14 +53,15 @@ export function parseBalanceMap(balances: Format): MerkleDistributorInfo {
 
 	// construct a tree
 	const tree = new BalanceTree(
-		sortedAddresses.map((address) => ({ account: address, amount: dataByAddress[address].amount, tokenId: dataByAddress[address].tokenId }))
+		sortedAddresses.map((address) => ({ account: address, amount: dataByAddress[address].amount }))
 	)
 
 	// generate claims
 	const claims = sortedAddresses.reduce<{
 		[address: string]: { amount: string; tokenId:string, index: number; proof: string[]; flags?: { [flag: string]: boolean } }
 	}>((memo, address, index) => {
-		const { amount, tokenId } = dataByAddress[address]
+		const { amount } = dataByAddress[address]
+		const tokenId = BigNumber.from(index.toString())
 		memo[address] = {
 			index,
 			amount: amount.toHexString(),
