@@ -2,22 +2,21 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import '@openzeppelin/contracts/access/Ownable.sol';
+import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 
 contract TEverNFT is ERC721, Ownable {
-
 	address public minter;
 	string public baseURL;
 
-    constructor(address owner) ERC721("TNEver","TNEVER")  {
+	constructor(address owner) ERC721('TNEver', 'TNEVER') {
 		transferOwnership(owner);
-    }
+	}
 
 	function transferMinter(address newMinter) external onlyOwner {
 		minter = newMinter;
 	}
-	
+
 	function mint(address to, uint256 tokenId) external onlyMinter {
 		_mint(to, tokenId);
 	}
@@ -27,12 +26,11 @@ contract TEverNFT is ERC721, Ownable {
 	}
 
 	function _baseURI() internal view override returns (string memory) {
-        return baseURL;
-    }
-
-	modifier onlyMinter {
-		require(msg.sender == minter, "TEverNFT: not minter.");
-		_;
+		return baseURL;
 	}
 
+	modifier onlyMinter() {
+		require(msg.sender == minter, 'TEverNFT: not minter.');
+		_;
+	}
 }

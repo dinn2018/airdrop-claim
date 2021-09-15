@@ -1,13 +1,12 @@
 module.exports = {
-	singleQuote: true,
-	bracketSpacing: false,
 	overrides: [
 		{
 			files: '*.sol',
 			options: {
-				printWidth: 120,
-				tabWidth: 4,
-				singleQuote: false,
+				printWidth: 160,
+				useTabs: true,
+				singleQuote: true,
+				bracketSpacing: true,
 				explicitTypes: 'always'
 			}
 		}

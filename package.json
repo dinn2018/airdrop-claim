@@ -39,8 +39,8 @@
 		"hardhat-deploy": "^0.8.7",
 		"hardhat-gas-reporter": "^1.0.4",
 		"mocha": "^9.0.2",
-		"prettier": "^2.3.1",
-		"prettier-plugin-solidity": "^1.0.0-beta.13",
+		"prettier": "^2.4.0",
+		"prettier-plugin-solidity": "^1.0.0-beta.18",
 		"solhint": "^3.3.6",
 		"solhint-plugin-prettier": "^0.0.5",
 		"solidity-coverage": "^0.7.15",
@@ -74,9 +74,7 @@
 		"mumbai:deploy": "hardhat --network mumbai deploy",
 		"mumbai:export": "hardhat --network mumbai export --export exports/mumbai.json",
 		"prepare": "hardhat typechain",
-		"lint": "eslint \"**/*.{js,ts}\" && solhint src/**/*.sol",
-		"lint:fix": "eslint --fix \"**/*.{js,ts}\" && solhint --fix src/**/*.sol",
-		"format": "prettier --check \"**/*.{ts,js,sol}\"",
-		"format:fix": "prettier --write \"**/*.{ts,js,sol}\""
+		"lint": "eslint \"**/*.{js,ts}\" && solhint contracts/**/*.sol",
+		"lint:fix": "eslint --fix \"**/*.{js,ts}\" && prettier --write contracts/**/*.sol && solhint contracts/**/*.sol"
 	}
 }
