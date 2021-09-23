@@ -13,12 +13,12 @@ contract TEverNFT is ERC721, Ownable {
 		transferOwnership(owner);
 	}
 
-	function transferMinter(address newMinter) external onlyOwner {
-		minter = newMinter;
-	}
-
 	function mint(address to, uint256 tokenId) external onlyMinter {
 		_mint(to, tokenId);
+	}
+
+	function transferMinter(address newMinter) external onlyOwner {
+		minter = newMinter;
 	}
 
 	function setBaseURI(string memory baseURI_) external onlyOwner {
