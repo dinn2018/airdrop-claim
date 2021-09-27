@@ -9,7 +9,7 @@ contract TEverNFT is ERC721, Ownable {
 	address public minter;
 	string public baseURL;
 
-	constructor(address owner) ERC721('TNEver', 'TNEVER') {
+	constructor(address owner) ERC721('TEver', 'TEVER') {
 		transferOwnership(owner);
 	}
 
