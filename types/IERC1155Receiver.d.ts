@@ -19,34 +19,13 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface MerkleDistributorInterface extends ethers.utils.Interface {
+interface IERC1155ReceiverInterface extends ethers.utils.Interface {
   functions: {
-    "claim(uint256,address,uint256,uint256,bytes32[])": FunctionFragment;
-    "erc1155()": FunctionFragment;
-    "isClaimed(uint256)": FunctionFragment;
-    "merkleRoot()": FunctionFragment;
-    "mints()": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
-    "setRoot(bytes32)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "token()": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "claim",
-    values: [BigNumberish, string, BigNumberish, BigNumberish, BytesLike[]]
-  ): string;
-  encodeFunctionData(functionFragment: "erc1155", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "isClaimed",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "merkleRoot",
-    values?: undefined
-  ): string;
-  encodeFunctionData(functionFragment: "mints", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
     values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
@@ -55,18 +34,11 @@ interface MerkleDistributorInterface extends ethers.utils.Interface {
     functionFragment: "onERC1155Received",
     values: [string, string, BigNumberish, BigNumberish, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "setRoot", values: [BytesLike]): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
 
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "erc1155", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "merkleRoot", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mints", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "onERC1155BatchReceived",
     data: BytesLike
@@ -75,21 +47,15 @@ interface MerkleDistributorInterface extends ethers.utils.Interface {
     functionFragment: "onERC1155Received",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setRoot", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
 
-  events: {
-    "Claimed(uint256,address,uint256,uint256)": EventFragment;
-  };
-
-  getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
+  events: {};
 }
 
-export class MerkleDistributor extends BaseContract {
+export class IERC1155Receiver extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -130,29 +96,9 @@ export class MerkleDistributor extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: MerkleDistributorInterface;
+  interface: IERC1155ReceiverInterface;
 
   functions: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      tokenId: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    erc1155(overrides?: CallOverrides): Promise<[string]>;
-
-    isClaimed(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<[string]>;
-
-    mints(overrides?: CallOverrides): Promise<[string]>;
-
     onERC1155BatchReceived(
       operator: string,
       from: string,
@@ -171,35 +117,11 @@ export class MerkleDistributor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setRoot(
-      merkleRoot_: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
-
-    token(overrides?: CallOverrides): Promise<[string]>;
   };
-
-  claim(
-    index: BigNumberish,
-    account: string,
-    amount: BigNumberish,
-    tokenId: BigNumberish,
-    merkleProof: BytesLike[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  erc1155(overrides?: CallOverrides): Promise<string>;
-
-  isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-  merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-  mints(overrides?: CallOverrides): Promise<string>;
 
   onERC1155BatchReceived(
     operator: string,
@@ -219,36 +141,12 @@ export class MerkleDistributor extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setRoot(
-    merkleRoot_: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   supportsInterface(
     interfaceId: BytesLike,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  token(overrides?: CallOverrides): Promise<string>;
-
   callStatic: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      tokenId: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    erc1155(overrides?: CallOverrides): Promise<string>;
-
-    isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-    mints(overrides?: CallOverrides): Promise<string>;
-
     onERC1155BatchReceived(
       operator: string,
       from: string,
@@ -266,55 +164,16 @@ export class MerkleDistributor extends BaseContract {
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    setRoot(merkleRoot_: BytesLike, overrides?: CallOverrides): Promise<void>;
 
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    token(overrides?: CallOverrides): Promise<string>;
   };
 
-  filters: {
-    Claimed(
-      index?: null,
-      account?: null,
-      amount?: null,
-      tokenId?: null
-    ): TypedEventFilter<
-      [BigNumber, string, BigNumber, BigNumber],
-      {
-        index: BigNumber;
-        account: string;
-        amount: BigNumber;
-        tokenId: BigNumber;
-      }
-    >;
-  };
+  filters: {};
 
   estimateGas: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      tokenId: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    erc1155(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isClaimed(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mints(overrides?: CallOverrides): Promise<BigNumber>;
-
     onERC1155BatchReceived(
       operator: string,
       from: string,
@@ -333,40 +192,13 @@ export class MerkleDistributor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setRoot(
-      merkleRoot_: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    token(overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    claim(
-      index: BigNumberish,
-      account: string,
-      amount: BigNumberish,
-      tokenId: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    erc1155(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    isClaimed(
-      index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    mints(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     onERC1155BatchReceived(
       operator: string,
       from: string,
@@ -385,16 +217,9 @@ export class MerkleDistributor extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setRoot(
-      merkleRoot_: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
   };
 }

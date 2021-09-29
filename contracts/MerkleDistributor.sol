@@ -3,13 +3,16 @@ pragma solidity ^0.8.0;
 
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
+import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
+import '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol';
+import '@openzeppelin/contracts/utils/introspection/IERC165.sol';
 
 import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
-contract MerkleDistributor {
+contract MerkleDistributor is IERC1155Receiver {
 	IERC20 public immutable token;
-	IERC721 public immutable nft;
+	IERC1155 public immutable erc1155;
 
 	bytes32 public merkleRoot;
 
@@ -22,12 +25,12 @@ contract MerkleDistributor {
 
 	constructor(
 		IERC20 token_,
-		IERC721 nft_,
+		IERC1155 erc1155_,
 		bytes32 merkleRoot_
 	) {
 		token = token_;
 		merkleRoot = merkleRoot_;
-		nft = nft_;
+		erc1155 = erc1155_;
 	}
 
 	function setRoot(bytes32 merkleRoot_) external {
@@ -64,13 +67,32 @@ contract MerkleDistributor {
 		_setClaimed(index);
 
 		require(IERC20(token).transfer(account, amount), 'MerkleDistributor: Transfer failed.');
-
-		uint256 balance = nft.balanceOf(account);
-		if (balance == 0) {
-			(bool success, ) = address(nft).call(abi.encodeWithSelector(mints, account, tokenId));
-			require(success, 'MerkleDistributor: mint nft token failed.');
-		}
+		erc1155.safeTransferFrom(address(this), account, 0, 1, new bytes(0));
 
 		emit Claimed(index, account, amount, tokenId);
+	}
+
+	 function onERC1155Received(
+        address operator,
+        address from,
+        uint256 id,
+        uint256 value,
+        bytes calldata data
+    ) external override returns (bytes4) {
+		return IERC1155Receiver.onERC1155Received.selector;
+	}
+
+    function onERC1155BatchReceived(
+        address operator,
+        address from,
+        uint256[] calldata ids,
+        uint256[] calldata values,
+        bytes calldata data
+    ) external override returns (bytes4) {
+		return IERC1155Receiver.onERC1155BatchReceived.selector;
+	}
+
+	function supportsInterface(bytes4 interfaceId) external view override returns (bool) {
+		return interfaceId == IERC1155Receiver.onERC1155Received.selector || interfaceId == IERC1155Receiver.onERC1155BatchReceived.selector;
 	}
 }

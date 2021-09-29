@@ -19,77 +19,89 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import { TypedEventFilter, TypedEvent, TypedListener } from "./commons";
 
-interface MerkleDistributorInterface extends ethers.utils.Interface {
+interface IERC1155MetadataURIInterface extends ethers.utils.Interface {
   functions: {
-    "claim(uint256,address,uint256,uint256,bytes32[])": FunctionFragment;
-    "erc1155()": FunctionFragment;
-    "isClaimed(uint256)": FunctionFragment;
-    "merkleRoot()": FunctionFragment;
-    "mints()": FunctionFragment;
-    "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
-    "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
-    "setRoot(bytes32)": FunctionFragment;
+    "balanceOf(address,uint256)": FunctionFragment;
+    "balanceOfBatch(address[],uint256[])": FunctionFragment;
+    "isApprovedForAll(address,address)": FunctionFragment;
+    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
+    "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
+    "setApprovalForAll(address,bool)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
-    "token()": FunctionFragment;
+    "uri(uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
-    functionFragment: "claim",
-    values: [BigNumberish, string, BigNumberish, BigNumberish, BytesLike[]]
-  ): string;
-  encodeFunctionData(functionFragment: "erc1155", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "isClaimed",
-    values: [BigNumberish]
+    functionFragment: "balanceOf",
+    values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "merkleRoot",
-    values?: undefined
+    functionFragment: "balanceOfBatch",
+    values: [string[], BigNumberish[]]
   ): string;
-  encodeFunctionData(functionFragment: "mints", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "onERC1155BatchReceived",
+    functionFragment: "isApprovedForAll",
+    values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "safeBatchTransferFrom",
     values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "onERC1155Received",
+    functionFragment: "safeTransferFrom",
     values: [string, string, BigNumberish, BigNumberish, BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "setRoot", values: [BytesLike]): string;
+  encodeFunctionData(
+    functionFragment: "setApprovalForAll",
+    values: [string, boolean]
+  ): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
   ): string;
-  encodeFunctionData(functionFragment: "token", values?: undefined): string;
+  encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
 
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "erc1155", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "merkleRoot", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mints", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "onERC1155BatchReceived",
+    functionFragment: "balanceOfBatch",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "onERC1155Received",
+    functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setRoot", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "safeBatchTransferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "safeTransferFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "token", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
 
   events: {
-    "Claimed(uint256,address,uint256,uint256)": EventFragment;
+    "ApprovalForAll(address,address,bool)": EventFragment;
+    "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
+    "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
+    "URI(string,uint256)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Claimed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
 }
 
-export class MerkleDistributor extends BaseContract {
+export class IERC1155MetadataURI extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -130,49 +142,48 @@ export class MerkleDistributor extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: MerkleDistributorInterface;
+  interface: IERC1155MetadataURIInterface;
 
   functions: {
-    claim(
-      index: BigNumberish,
+    balanceOf(
       account: string,
-      amount: BigNumberish,
-      tokenId: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
-    erc1155(overrides?: CallOverrides): Promise<[string]>;
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
 
-    isClaimed(
-      index: BigNumberish,
+    isApprovedForAll(
+      account: string,
+      operator: string,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    merkleRoot(overrides?: CallOverrides): Promise<[string]>;
-
-    mints(overrides?: CallOverrides): Promise<[string]>;
-
-    onERC1155BatchReceived(
-      operator: string,
+    safeBatchTransferFrom(
       from: string,
+      to: string,
       ids: BigNumberish[],
-      values: BigNumberish[],
+      amounts: BigNumberish[],
       data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    onERC1155Received(
-      operator: string,
+    safeTransferFrom(
       from: string,
+      to: string,
       id: BigNumberish,
-      value: BigNumberish,
+      amount: BigNumberish,
       data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    setRoot(
-      merkleRoot_: BytesLike,
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -181,46 +192,48 @@ export class MerkleDistributor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
-    token(overrides?: CallOverrides): Promise<[string]>;
+    uri(id: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
   };
 
-  claim(
-    index: BigNumberish,
+  balanceOf(
     account: string,
-    amount: BigNumberish,
-    tokenId: BigNumberish,
-    merkleProof: BytesLike[],
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  erc1155(overrides?: CallOverrides): Promise<string>;
-
-  isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-  merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-  mints(overrides?: CallOverrides): Promise<string>;
-
-  onERC1155BatchReceived(
-    operator: string,
-    from: string,
-    ids: BigNumberish[],
-    values: BigNumberish[],
-    data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  onERC1155Received(
-    operator: string,
-    from: string,
     id: BigNumberish,
-    value: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
+
+  balanceOfBatch(
+    accounts: string[],
+    ids: BigNumberish[],
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  isApprovedForAll(
+    account: string,
+    operator: string,
+    overrides?: CallOverrides
+  ): Promise<boolean>;
+
+  safeBatchTransferFrom(
+    from: string,
+    to: string,
+    ids: BigNumberish[],
+    amounts: BigNumberish[],
     data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  setRoot(
-    merkleRoot_: BytesLike,
+  safeTransferFrom(
+    from: string,
+    to: string,
+    id: BigNumberish,
+    amount: BigNumberish,
+    data: BytesLike,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  setApprovalForAll(
+    operator: string,
+    approved: boolean,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -229,112 +242,149 @@ export class MerkleDistributor extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
-  token(overrides?: CallOverrides): Promise<string>;
+  uri(id: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    claim(
-      index: BigNumberish,
+    balanceOf(
       account: string,
-      amount: BigNumberish,
-      tokenId: BigNumberish,
-      merkleProof: BytesLike[],
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    balanceOfBatch(
+      accounts: string[],
+      ids: BigNumberish[],
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    isApprovedForAll(
+      account: string,
+      operator: string,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    safeBatchTransferFrom(
+      from: string,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
-    erc1155(overrides?: CallOverrides): Promise<string>;
-
-    isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
-
-    merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-    mints(overrides?: CallOverrides): Promise<string>;
-
-    onERC1155BatchReceived(
-      operator: string,
+    safeTransferFrom(
       from: string,
-      ids: BigNumberish[],
-      values: BigNumberish[],
-      data: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    onERC1155Received(
-      operator: string,
-      from: string,
+      to: string,
       id: BigNumberish,
-      value: BigNumberish,
+      amount: BigNumberish,
       data: BytesLike,
       overrides?: CallOverrides
-    ): Promise<string>;
+    ): Promise<void>;
 
-    setRoot(merkleRoot_: BytesLike, overrides?: CallOverrides): Promise<void>;
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     supportsInterface(
       interfaceId: BytesLike,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    token(overrides?: CallOverrides): Promise<string>;
+    uri(id: BigNumberish, overrides?: CallOverrides): Promise<string>;
   };
 
   filters: {
-    Claimed(
-      index?: null,
-      account?: null,
-      amount?: null,
-      tokenId?: null
+    ApprovalForAll(
+      account?: string | null,
+      operator?: string | null,
+      approved?: null
     ): TypedEventFilter<
-      [BigNumber, string, BigNumber, BigNumber],
+      [string, string, boolean],
+      { account: string; operator: string; approved: boolean }
+    >;
+
+    TransferBatch(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      ids?: null,
+      values?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber[], BigNumber[]],
       {
-        index: BigNumber;
-        account: string;
-        amount: BigNumber;
-        tokenId: BigNumber;
+        operator: string;
+        from: string;
+        to: string;
+        ids: BigNumber[];
+        values: BigNumber[];
       }
     >;
+
+    TransferSingle(
+      operator?: string | null,
+      from?: string | null,
+      to?: string | null,
+      id?: null,
+      value?: null
+    ): TypedEventFilter<
+      [string, string, string, BigNumber, BigNumber],
+      {
+        operator: string;
+        from: string;
+        to: string;
+        id: BigNumber;
+        value: BigNumber;
+      }
+    >;
+
+    URI(
+      value?: null,
+      id?: BigNumberish | null
+    ): TypedEventFilter<[string, BigNumber], { value: string; id: BigNumber }>;
   };
 
   estimateGas: {
-    claim(
-      index: BigNumberish,
+    balanceOf(
       account: string,
-      amount: BigNumberish,
-      tokenId: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    erc1155(overrides?: CallOverrides): Promise<BigNumber>;
-
-    isClaimed(
-      index: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    merkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mints(overrides?: CallOverrides): Promise<BigNumber>;
-
-    onERC1155BatchReceived(
-      operator: string,
-      from: string,
+    balanceOfBatch(
+      accounts: string[],
       ids: BigNumberish[],
-      values: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    onERC1155Received(
+    isApprovedForAll(
+      account: string,
       operator: string,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    safeBatchTransferFrom(
       from: string,
-      id: BigNumberish,
-      value: BigNumberish,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    setRoot(
-      merkleRoot_: BytesLike,
+    safeTransferFrom(
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -343,50 +393,49 @@ export class MerkleDistributor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    token(overrides?: CallOverrides): Promise<BigNumber>;
+    uri(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    claim(
-      index: BigNumberish,
+    balanceOf(
       account: string,
-      amount: BigNumberish,
-      tokenId: BigNumberish,
-      merkleProof: BytesLike[],
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    erc1155(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    isClaimed(
-      index: BigNumberish,
+      id: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    merkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    mints(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    onERC1155BatchReceived(
-      operator: string,
-      from: string,
+    balanceOfBatch(
+      accounts: string[],
       ids: BigNumberish[],
-      values: BigNumberish[],
-      data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    onERC1155Received(
+    isApprovedForAll(
+      account: string,
       operator: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    safeBatchTransferFrom(
       from: string,
-      id: BigNumberish,
-      value: BigNumberish,
+      to: string,
+      ids: BigNumberish[],
+      amounts: BigNumberish[],
       data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    setRoot(
-      merkleRoot_: BytesLike,
+    safeTransferFrom(
+      from: string,
+      to: string,
+      id: BigNumberish,
+      amount: BigNumberish,
+      data: BytesLike,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setApprovalForAll(
+      operator: string,
+      approved: boolean,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -395,6 +444,9 @@ export class MerkleDistributor extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    token(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    uri(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
   };
 }
