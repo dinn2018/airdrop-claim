@@ -13,12 +13,9 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 contract MerkleDistributor is IERC1155Receiver {
 	IERC20 public immutable token;
 	IERC1155 public immutable erc1155;
-
 	bytes32 public merkleRoot;
 
-	bytes4 public immutable mints = bytes4(keccak256('mint(address,uint256)'));
-
-	event Claimed(uint256 index, address account, uint256 amount, uint256 tokenId);
+	event Claimed(uint256 indexed index, address indexed account, uint256 amount, uint256 tokenId);
 
 	// This is a packed array of booleans.
 	mapping(uint256 => uint256) private claimedBitMap;
@@ -67,7 +64,7 @@ contract MerkleDistributor is IERC1155Receiver {
 		_setClaimed(index);
 
 		require(IERC20(token).transfer(account, amount), 'MerkleDistributor: Transfer failed.');
-		erc1155.safeTransferFrom(address(this), account, 0, 1, new bytes(0));
+		erc1155.safeTransferFrom(address(this), account, tokenId, 1, new bytes(0));
 
 		emit Claimed(index, account, amount, tokenId);
 	}
@@ -92,7 +89,7 @@ contract MerkleDistributor is IERC1155Receiver {
 		return IERC1155Receiver.onERC1155BatchReceived.selector;
 	}
 
-	function supportsInterface(bytes4 interfaceId) external view override returns (bool) {
+	function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
 		return interfaceId == IERC1155Receiver.onERC1155Received.selector || interfaceId == IERC1155Receiver.onERC1155BatchReceived.selector;
 	}
 }

@@ -25,7 +25,7 @@ interface TEver1155Interface extends ethers.utils.Interface {
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(address,uint256,uint256)": FunctionFragment;
+    "mint(address,uint256,uint256,bytes)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
@@ -57,7 +57,7 @@ interface TEver1155Interface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [string, BigNumberish, BigNumberish]
+    values: [string, BigNumberish, BigNumberish, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -219,6 +219,7 @@ export class TEver1155 extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -301,6 +302,7 @@ export class TEver1155 extends BaseContract {
     to: string,
     tokenId: BigNumberish,
     amount: BigNumberish,
+    data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -380,6 +382,7 @@ export class TEver1155 extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
+      data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -516,6 +519,7 @@ export class TEver1155 extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -602,6 +606,7 @@ export class TEver1155 extends BaseContract {
       to: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
+      data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 

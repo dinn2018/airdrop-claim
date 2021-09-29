@@ -25,7 +25,6 @@ interface MerkleDistributorInterface extends ethers.utils.Interface {
     "erc1155()": FunctionFragment;
     "isClaimed(uint256)": FunctionFragment;
     "merkleRoot()": FunctionFragment;
-    "mints()": FunctionFragment;
     "onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "onERC1155Received(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setRoot(bytes32)": FunctionFragment;
@@ -46,7 +45,6 @@ interface MerkleDistributorInterface extends ethers.utils.Interface {
     functionFragment: "merkleRoot",
     values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "mints", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "onERC1155BatchReceived",
     values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
@@ -66,7 +64,6 @@ interface MerkleDistributorInterface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "erc1155", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "isClaimed", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "merkleRoot", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "mints", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "onERC1155BatchReceived",
     data: BytesLike
@@ -151,8 +148,6 @@ export class MerkleDistributor extends BaseContract {
 
     merkleRoot(overrides?: CallOverrides): Promise<[string]>;
 
-    mints(overrides?: CallOverrides): Promise<[string]>;
-
     onERC1155BatchReceived(
       operator: string,
       from: string,
@@ -198,8 +193,6 @@ export class MerkleDistributor extends BaseContract {
   isClaimed(index: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
 
   merkleRoot(overrides?: CallOverrides): Promise<string>;
-
-  mints(overrides?: CallOverrides): Promise<string>;
 
   onERC1155BatchReceived(
     operator: string,
@@ -247,8 +240,6 @@ export class MerkleDistributor extends BaseContract {
 
     merkleRoot(overrides?: CallOverrides): Promise<string>;
 
-    mints(overrides?: CallOverrides): Promise<string>;
-
     onERC1155BatchReceived(
       operator: string,
       from: string,
@@ -279,8 +270,8 @@ export class MerkleDistributor extends BaseContract {
 
   filters: {
     Claimed(
-      index?: null,
-      account?: null,
+      index?: BigNumberish | null,
+      account?: string | null,
       amount?: null,
       tokenId?: null
     ): TypedEventFilter<
@@ -312,8 +303,6 @@ export class MerkleDistributor extends BaseContract {
     ): Promise<BigNumber>;
 
     merkleRoot(overrides?: CallOverrides): Promise<BigNumber>;
-
-    mints(overrides?: CallOverrides): Promise<BigNumber>;
 
     onERC1155BatchReceived(
       operator: string,
@@ -364,8 +353,6 @@ export class MerkleDistributor extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     merkleRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    mints(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     onERC1155BatchReceived(
       operator: string,

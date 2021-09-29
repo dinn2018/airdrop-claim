@@ -12,16 +12,16 @@ contract TEver1155 is ERC1155Supply, Ownable {
 	string public name = 'TEver1155 on mumbai';
 
 	constructor(address owner, string memory _uri) ERC1155(_uri) {
-		_mint(owner, 0, 1000000, new bytes(0));
 		transferOwnership(owner);
 	}
 
 	function mint(
 		address to,
 		uint256 tokenId,
-		uint256 amount
+		uint256 amount,
+		bytes calldata data
 	) external onlyOwner {
-		_mint(to, tokenId, amount, new bytes(0));
+		_mint(to, tokenId, amount, data);
 	}
 
 	function setURI(string memory _uri) external onlyOwner {

@@ -61,7 +61,7 @@ export function parseBalanceMap(balances: Format): MerkleDistributorInfo {
 		[address: string]: { amount: string; tokenId:string, index: number; proof: string[]; flags?: { [flag: string]: boolean } }
 	}>((memo, address, index) => {
 		const { amount } = dataByAddress[address]
-		const tokenId = BigNumber.from(index.toString())
+		const tokenId = BigNumber.from('0') // BigNumber.from(index.toString())
 		memo[address] = {
 			index,
 			amount: amount.toHexString(),

@@ -6,7 +6,7 @@ export default class BalanceTree {
 	constructor(balances: { account: string; amount: BigNumber }[]) {
 		this.tree = new MerkleTree(
 			balances.map(({ account, amount }, index) => {
-				const tokenId = BigNumber.from(index.toString())
+				const tokenId = BigNumber.from('0') // BigNumber.from(index.toString())
 				return BalanceTree.toNode(index, account, amount, tokenId)
 			})
 		)
