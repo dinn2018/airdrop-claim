@@ -6,7 +6,6 @@ import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol';
 import '@openzeppelin/contracts/utils/introspection/IERC165.sol';
-
 import '@openzeppelin/contracts/utils/cryptography/MerkleProof.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -69,23 +68,23 @@ contract MerkleDistributor is IERC1155Receiver {
 		emit Claimed(index, account, amount, tokenId);
 	}
 
-	 function onERC1155Received(
-        address operator,
-        address from,
-        uint256 id,
-        uint256 value,
-        bytes calldata data
-    ) external override returns (bytes4) {
+	function onERC1155Received(
+		address operator,
+		address from,
+		uint256 id,
+		uint256 value,
+		bytes calldata data
+	) external override returns (bytes4) {
 		return IERC1155Receiver.onERC1155Received.selector;
 	}
 
-    function onERC1155BatchReceived(
-        address operator,
-        address from,
-        uint256[] calldata ids,
-        uint256[] calldata values,
-        bytes calldata data
-    ) external override returns (bytes4) {
+	function onERC1155BatchReceived(
+		address operator,
+		address from,
+		uint256[] calldata ids,
+		uint256[] calldata values,
+		bytes calldata data
+	) external override returns (bytes4) {
 		return IERC1155Receiver.onERC1155BatchReceived.selector;
 	}
 

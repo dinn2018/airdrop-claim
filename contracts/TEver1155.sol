@@ -5,13 +5,21 @@ pragma solidity ^0.8.0;
 import '@openzeppelin/contracts/access/Ownable.sol';
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
 import '@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol';
-import '@openzeppelin/contracts/utils/Strings.sol';
 
 contract TEver1155 is ERC1155Supply, Ownable {
-	using Strings for uint256;
-	string public name = 'TEver1155 on mumbai';
 
-	constructor(address owner, string memory _uri) ERC1155(_uri) {
+	string public name = 'TEver';
+
+	struct Meta {
+		bool minted;
+		string uri;
+	}
+
+	mapping(uint256 => Meta) public meta;
+
+	event PermanentURI(string _value, uint256 indexed _id);
+
+	constructor(address owner) ERC1155('') {
 		transferOwnership(owner);
 	}
 
@@ -19,17 +27,24 @@ contract TEver1155 is ERC1155Supply, Ownable {
 		address to,
 		uint256 tokenId,
 		uint256 amount,
+		string memory metaUri,
 		bytes calldata data
 	) external onlyOwner {
+		require(!meta[tokenId].minted, 'TEver1155: token has been mint');
+
 		_mint(to, tokenId, amount, data);
+		meta[tokenId] = Meta(true, metaUri);
+
+		emit PermanentURI(metaUri, tokenId);
 	}
 
-	function setURI(string memory _uri) external onlyOwner {
-		super._setURI(_uri);
+	function setTokenUri(uint256 tokenId, string memory uri_) external onlyOwner {
+		meta[tokenId].uri = uri_;
 	}
 
 	function uri(uint256 tokenId) public view override returns (string memory) {
 		require(exists(tokenId), 'TEver1155: URI query for nonexistent token');
-		return bytes(super.uri(tokenId)).length > 0 ? string(abi.encodePacked(super.uri(tokenId), tokenId.toString())) : '';
+		return meta[tokenId].uri;
 	}
+
 }

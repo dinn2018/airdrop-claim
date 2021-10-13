@@ -25,14 +25,14 @@ interface TEver1155Interface extends ethers.utils.Interface {
     "balanceOfBatch(address[],uint256[])": FunctionFragment;
     "exists(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
-    "mint(address,uint256,uint256,bytes)": FunctionFragment;
+    "meta(uint256)": FunctionFragment;
+    "mint(address,uint256,uint256,string,bytes)": FunctionFragment;
     "name()": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
     "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
     "setApprovalForAll(address,bool)": FunctionFragment;
-    "setURI(string)": FunctionFragment;
     "supportsInterface(bytes4)": FunctionFragment;
     "totalSupply(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -55,9 +55,10 @@ interface TEver1155Interface extends ethers.utils.Interface {
     functionFragment: "isApprovedForAll",
     values: [string, string]
   ): string;
+  encodeFunctionData(functionFragment: "meta", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "mint",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
+    values: [string, BigNumberish, BigNumberish, string, BytesLike]
   ): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
@@ -77,7 +78,6 @@ interface TEver1155Interface extends ethers.utils.Interface {
     functionFragment: "setApprovalForAll",
     values: [string, boolean]
   ): string;
-  encodeFunctionData(functionFragment: "setURI", values: [string]): string;
   encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
@@ -102,6 +102,7 @@ interface TEver1155Interface extends ethers.utils.Interface {
     functionFragment: "isApprovedForAll",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "meta", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -121,7 +122,6 @@ interface TEver1155Interface extends ethers.utils.Interface {
     functionFragment: "setApprovalForAll",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "setURI", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "supportsInterface",
     data: BytesLike
@@ -139,6 +139,7 @@ interface TEver1155Interface extends ethers.utils.Interface {
   events: {
     "ApprovalForAll(address,address,bool)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
+    "PermanentURI(string,uint256)": EventFragment;
     "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
     "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
     "URI(string,uint256)": EventFragment;
@@ -146,6 +147,7 @@ interface TEver1155Interface extends ethers.utils.Interface {
 
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "PermanentURI"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
@@ -215,10 +217,16 @@ export class TEver1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    meta(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { minted: boolean; uri: string }>;
+
     mint(
       to: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
+      metaUri: string,
       data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -252,11 +260,6 @@ export class TEver1155 extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    setURI(
-      _uri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -298,10 +301,16 @@ export class TEver1155 extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  meta(
+    arg0: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<[boolean, string] & { minted: boolean; uri: string }>;
+
   mint(
     to: string,
     tokenId: BigNumberish,
     amount: BigNumberish,
+    metaUri: string,
     data: BytesLike,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -335,11 +344,6 @@ export class TEver1155 extends BaseContract {
   setApprovalForAll(
     operator: string,
     approved: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  setURI(
-    _uri: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -378,10 +382,16 @@ export class TEver1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<boolean>;
 
+    meta(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[boolean, string] & { minted: boolean; uri: string }>;
+
     mint(
       to: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
+      metaUri: string,
       data: BytesLike,
       overrides?: CallOverrides
     ): Promise<void>;
@@ -415,8 +425,6 @@ export class TEver1155 extends BaseContract {
       approved: boolean,
       overrides?: CallOverrides
     ): Promise<void>;
-
-    setURI(_uri: string, overrides?: CallOverrides): Promise<void>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -452,6 +460,14 @@ export class TEver1155 extends BaseContract {
     ): TypedEventFilter<
       [string, string],
       { previousOwner: string; newOwner: string }
+    >;
+
+    PermanentURI(
+      _value?: null,
+      _id?: BigNumberish | null
+    ): TypedEventFilter<
+      [string, BigNumber],
+      { _value: string; _id: BigNumber }
     >;
 
     TransferBatch(
@@ -515,10 +531,13 @@ export class TEver1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    meta(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
+
     mint(
       to: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
+      metaUri: string,
       data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -552,11 +571,6 @@ export class TEver1155 extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    setURI(
-      _uri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -602,10 +616,16 @@ export class TEver1155 extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    meta(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     mint(
       to: string,
       tokenId: BigNumberish,
       amount: BigNumberish,
+      metaUri: string,
       data: BytesLike,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -639,11 +659,6 @@ export class TEver1155 extends BaseContract {
     setApprovalForAll(
       operator: string,
       approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setURI(
-      _uri: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
