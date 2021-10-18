@@ -27,15 +27,15 @@ task('claim', 'claim')
 		console.log('receipt', receipt)
 	})
 
-task('set', 'set')
-	.addParam('root', 'merkle root')
-	.setAction(async (args: any, env: HardhatRuntimeEnvironment) => {
-		const merkleDistributor = await MerkleDistributor(env)
-		const tx = await merkleDistributor.setRoot(args.root)
-		console.log('setRoot', tx)
-		const receipt = await tx.wait()
-		console.log('receipt', receipt)
-	})
+// task('set', 'set')
+// .addParam('root', 'merkle root')
+// .setAction(async (args: any, env: HardhatRuntimeEnvironment) => {
+// const merkleDistributor = await MerkleDistributor(env)
+// const tx = await merkleDistributor.setRoot(args.root)
+// console.log('setRoot', tx)
+// const receipt = await tx.wait()
+// console.log('receipt', receipt)
+// })
 
 task('root')
 	.setAction(async (args: any, env: HardhatRuntimeEnvironment) => {
