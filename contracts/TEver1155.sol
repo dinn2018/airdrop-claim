@@ -8,7 +8,7 @@ import '@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol';
 
 contract TEver1155 is ERC1155Supply, Ownable {
 
-	string public name = 'TEver';
+	string public name = '4EVERLAND';
 
 	struct Meta {
 		bool minted;

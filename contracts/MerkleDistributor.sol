@@ -12,7 +12,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 contract MerkleDistributor is IERC1155Receiver {
 	IERC20 public immutable token;
 	IERC1155 public immutable erc1155;
-	bytes32 public merkleRoot;
+	bytes32 public immutable merkleRoot;
 
 	event Claimed(uint256 indexed index, address indexed account, uint256 amount, uint256 tokenId);
 
@@ -27,10 +27,6 @@ contract MerkleDistributor is IERC1155Receiver {
 		token = token_;
 		merkleRoot = merkleRoot_;
 		erc1155 = erc1155_;
-	}
-
-	function setRoot(bytes32 merkleRoot_) external {
-		merkleRoot = merkleRoot_;
 	}
 
 	function isClaimed(uint256 index) public view returns (bool) {
@@ -54,7 +50,7 @@ contract MerkleDistributor is IERC1155Receiver {
 		uint256 tokenId,
 		bytes32[] calldata merkleProof
 	) external {
-		// require(!isClaimed(index), "MerkleDistributor: Drop already claimed.");
+		require(!isClaimed(index), 'MerkleDistributor: Drop already claimed.');
 		// Verify the merkle proof.
 		bytes32 node = keccak256(abi.encodePacked(index, account, amount, tokenId));
 		require(MerkleProof.verify(merkleProof, merkleRoot, node), 'MerkleDistributor: Invalid proof.');
