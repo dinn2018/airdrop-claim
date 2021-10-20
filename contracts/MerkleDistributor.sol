@@ -15,7 +15,6 @@ contract MerkleDistributor is IERC1155Receiver {
 	bytes32 public immutable merkleRoot;
 
 	event Claimed(uint256 indexed index, address indexed account, uint256 amount, uint256 tokenId);
-
 	// This is a packed array of booleans.
 	mapping(uint256 => uint256) private claimedBitMap;
 

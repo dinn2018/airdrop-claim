@@ -4,7 +4,7 @@ import 'hardhat-deploy'
 import { task } from 'hardhat/config'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 import { MerkleDistributor } from './contracts'
-import { toToken } from './utils'
+import { BigNumber } from 'ethers'
 
 task('claim', 'claim')
 	.addParam('index', 'account index')
@@ -18,7 +18,7 @@ task('claim', 'claim')
 		const tx = await merkleDistributor.claim(
 			args.index,
 			args.to,
-			toToken(args.amount),
+			BigNumber.from(args.amount),
 			args.tokenid,
 			proofs
 		)
