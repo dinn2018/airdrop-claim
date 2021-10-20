@@ -19,7 +19,6 @@ export type { IERC165 } from "./IERC165";
 export type { MerkleDistributor } from "./MerkleDistributor";
 export type { TEver } from "./TEver";
 export type { TEver1155 } from "./TEver1155";
-export type { TEverNFT } from "./TEverNFT";
 
 export { Ownable__factory } from "./factories/Ownable__factory";
 export { ERC1155__factory } from "./factories/ERC1155__factory";
@@ -39,4 +38,3 @@ export { IERC165__factory } from "./factories/IERC165__factory";
 export { MerkleDistributor__factory } from "./factories/MerkleDistributor__factory";
 export { TEver__factory } from "./factories/TEver__factory";
 export { TEver1155__factory } from "./factories/TEver1155__factory";
-export { TEverNFT__factory } from "./factories/TEverNFT__factory";

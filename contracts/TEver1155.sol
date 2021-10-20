@@ -30,11 +30,9 @@ contract TEver1155 is ERC1155Supply, Ownable {
 		string memory metaUri,
 		bytes calldata data
 	) external onlyOwner {
-		require(!meta[tokenId].minted, 'TEver1155: token has been mint');
-
+		require(!meta[tokenId].minted, 'TEver1155: token has been minted');
 		_mint(to, tokenId, amount, data);
 		meta[tokenId] = Meta(true, metaUri);
-
 		emit PermanentURI(metaUri, tokenId);
 	}
 

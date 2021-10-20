@@ -6,6 +6,6 @@ import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 
 contract TEver is ERC20 {
 	constructor(address minter) ERC20('TEver', 'TEVER') {
-		_mint(minter, 5e10 * 1e18);
+		_mint(minter, 5e11 * 1e18);
 	}
 }
