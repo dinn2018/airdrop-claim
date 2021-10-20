@@ -30,9 +30,10 @@ contract TEver1155 is ERC1155Supply, Ownable {
 		string memory metaUri,
 		bytes calldata data
 	) external onlyOwner {
-		require(!meta[tokenId].minted, 'TEver1155: token has been minted');
+		require(!meta[tokenId].minted, 'TEver1155: token has been minted.');
 		_mint(to, tokenId, amount, data);
 		meta[tokenId] = Meta(true, metaUri);
+
 		emit PermanentURI(metaUri, tokenId);
 	}
 
@@ -41,7 +42,7 @@ contract TEver1155 is ERC1155Supply, Ownable {
 	}
 
 	function uri(uint256 tokenId) public view override returns (string memory) {
-		require(exists(tokenId), 'TEver1155: URI query for nonexistent token');
+		require(exists(tokenId), 'TEver1155: URI query for nonexistent token.');
 		return meta[tokenId].uri;
 	}
 
