@@ -49,7 +49,7 @@ contract MerkleDistributor is IERC1155Receiver {
 		uint256 tokenId,
 		bytes32[] calldata merkleProof
 	) external {
-		require(!isClaimed(index), 'MerkleDistributor: Drop already claimed');
+		require(!isClaimed(index), 'MerkleDistributor: Drop already claimed.');
 		// Verify the merkle proof.
 		bytes32 node = keccak256(abi.encodePacked(index, account, amount, tokenId));
 		require(MerkleProof.verify(merkleProof, merkleRoot, node), 'MerkleDistributor: Invalid proof.');
