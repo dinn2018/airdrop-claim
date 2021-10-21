@@ -9,10 +9,10 @@ coverage*
 !.vscode/settings.json.default
 !.vscode/launch.json.default
 !.vscode/extensions.json.default
-
 node_modules/
 .env
-
+tasks/
+hardhat.config.ts
 .yalc
 yalc.lock
 
