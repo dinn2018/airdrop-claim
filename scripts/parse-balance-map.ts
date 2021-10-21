@@ -37,10 +37,14 @@ export function parseBalanceMap(balances: Format): MerkleDistributorInfo {
 	const dataByAddress = balancesInNewFormat.reduce<{
 		[address: string]: { amount: BigNumber}
 	}>((memo, { address: account, amount }) => {
-		if (!isAddress(account)) {
+		if (!account.match(/^(0x)?[0-9a-fA-F]{40}$/)) { 
 			throw new Error(`Found invalid address: ${account}`)
 		}
-		const parsed = getAddress(account)
+		// if (!isAddress(account)) {
+		// throw new Error(`Found invalid address: ${account}`)
+		// }
+		// const parsed = getAddress(account)
+		const parsed = account
 		if (memo[parsed]) throw new Error(`Duplicate address: ${parsed}`)
 		const parsedAmount = BigNumber.from(amount)
 		if (parsedAmount.lte(0)) throw new Error(`Invalid amount for account: ${account}`)
